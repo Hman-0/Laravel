@@ -19,15 +19,13 @@ class ContactsSeeder extends Seeder
                 'email' => 'hehe@gmail.com',
                 'phone' => '0123456789',
                 'title' => 'hehee',
-                'content' => 'hdqwhqwudh',
 
             ],
             [
                 'name' => 'Nguyễn Văn B',
                 'email' => 'huhu@gmail.com',
-                'phone' => '0123456789',
+                'phone' => '012345678889',
                 'title' => 'huhu',
-                'content' => 'hdqwhqwudh',
             ],
         ]);
     }

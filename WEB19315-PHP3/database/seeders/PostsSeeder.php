@@ -23,6 +23,7 @@ class PostsSeeder extends Seeder
             [
                 'title' => 'Post 2',
                 'content' => 'Content 2',
+                'image'=>'imagcce1.jpg',
                 'category_id' => 2,
             ],
         ]);
