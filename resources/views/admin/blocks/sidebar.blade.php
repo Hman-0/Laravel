@@ -38,10 +38,10 @@
             <a class="nav-link" href="{{route('admin.products.index')}}"><i class="bi bi-box"></i> Products</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#"><i class="bi bi-envelope"></i> Sản phẩm    </a>
+            <a class="nav-link" href="{{route('admin.categories.index')}}"><i class="bi bi-envelope"></i> Category    </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#"><i class="bi bi-people"></i> Users</a>
+            <a class="nav-link" href="{{ route('admin.banners.index')}}"><i class="bi bi-people"></i> Banner </a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="#"><i class="bi bi-box-seam"></i> Orders</a>
