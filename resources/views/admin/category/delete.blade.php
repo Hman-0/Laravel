@@ -1,23 +1,12 @@
 @extends('layouts.admin')
 
-@section('title', 'Danh sách danh mục')
+@section('title', 'Thùng rác danh mục')
 
 @section('content')
     <div class="page-header">
-        <h1>Danh sách danh mục</h1>
+        <h1>Thùng rác danh mục</h1>
     </div>
-    <a href="{{ route('admin.categories.create') }}" class="btn btn-primary mb-3"> Thêm danh mục</a>
-    <a href="{{ route('admin.categories.delete') }}" class="btn btn-danger mb-3">Thùng rác  </a>
-    @if (session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-    @endif
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
+    <a href="{{ route('admin.categories.index')}}" class="btn btn-secondary">Quay lại</a>
 
     <div class="row">
         <div class="col-md-12">
@@ -37,11 +26,15 @@
                         <td>{{ $category->ten_danh_muc }}</td>
                         <td>{{ $category->trang_thai == 1 ? 'Hiển thị' : 'Ẩn' }}</td>
                         <td>
-                            <a href="{{ route('admin.categories.edit', $category->id) }}" class="btn btn-warning btn-sm">Sửa</a>
-                            <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST" class="d-inline">
+                            <form action="{{ route('admin.categories.restore', $category->id) }}" method="POST" class="d-inline">
                                 @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</button>
+                                @method('PUT')
+                                <button type="submit" class="btn btn-info btn-sm">Khôi phục</button>
+                            </form>
+                            <form action="{{ route('admin.categories.forceDelete', $category->id) }}" method="POST" class="d-inline">
+                                @csrf
+                                @method('post')
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không?')">Xóa</button>
                             </form>
                         </td>
                     </tr>

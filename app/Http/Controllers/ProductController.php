@@ -148,12 +148,28 @@ class ProductController extends Controller
     }
     public function destroy($id)
     {
-        $product = Product::findOrFail($id);
-        if ($product->img) {
-            Storage::disk('public')->delete($product->img);
-        }
-        $product->delete();
+        $product = Product::findOrFail($id)->delete();
         return redirect()->route('admin.products.index')->with('success', 'Xóa sản phẩm thành công');
+    }
+    public function delete()
+    {
+        $products  = Product::onlyTrashed()->paginate(10);
+        return view('admin.products.delete', compact('products'));
+        
+    }
+    public function restore($id)
+    {
+        $products  = Product::withTrashed()->findOrFail($id)->restore();
+        return redirect()->route('admin.products.index' , compact('products'))->with('success', 'Khôi phục hợp lệ');
+    }
+    public function forceDelete($id)
+    {
+        $products = Product::withTrashed()->findOrFail($id);
+        if ($products->img) {
+            Storage::disk('public')->delete($products->img);
+        }    
+        $products->forceDelete();
+        return redirect()->route('admin.products.index' ,compact('products'))->with('success', 'Xóa hợp lệ');
     }
 
 }

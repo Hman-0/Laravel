@@ -21,6 +21,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/store', [ProductController::class, 'store'])->name('store');
         Route::put('/{id}/update', [ProductController::class, 'update'])->name('update');
         Route::delete('/{id}/destroy', [ProductController::class, 'destroy'])->name('destroy');
+        Route::get('/delete', [ProductController::class, 'delete'])->name('delete');
+        Route::put('/{id}/restore', [ProductController::class, 'restore'])->name('restore');
+        Route::post('/{id}/forceDelete', [ProductController::class, 'forceDelete'])->name('forceDelete');
+
+        
     });
 
     Route::prefix('categories')->name('categories.')->group(function () {
@@ -30,9 +35,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/{id}/edit' , [CategoryController::class , 'edit'])->name('edit');
         Route::put('/{id}/update' , [CategoryController::class , 'update'])->name('update');
         Route::delete('/{id}/destroy', [CategoryController::class, 'destroy'])->name('destroy');
-    });
-    Route::prefix('categories')->name('categories.')->group(function () {
-        Route::get('/', [CategoryController::class, 'index'])->name('index');
+        Route::get('/delete', [CategoryController::class, 'delete'])->name('delete');
+        Route::put('/{id}/restore', [CategoryController::class, 'restore'])->name('restore');
+        Route::post('/{id}/forceDelete', [CategoryController::class, 'forceDelete'])->name('forceDelete');
     });
     Route::prefix('banners')->name('banners.')->group(function () {
         Route::get('/', [BannerController::class, 'index'])->name('index');
@@ -41,6 +46,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/{id}/edit', [BannerController::class, 'edit'])->name('edit');
         Route::put('/{id}/update', [BannerController::class, 'update'])->name('update');
         Route::delete('/{id}/destroy', [BannerController::class, 'destroy'])->name('destroy');
+        Route::get('/delete', [BannerController::class, 'delete'])->name('delete');
+        Route::put('/{id}/restore', [BannerController::class, 'restore'])->name('restore');
+        Route::post('/{id}/forceDelete', [BannerController::class, 'forceDelete'])->name('forceDelete');
     });
 
 });

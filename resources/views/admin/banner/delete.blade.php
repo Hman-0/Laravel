@@ -5,13 +5,7 @@
 @section('content')
 <div class="container mt-4">
     <h1 class="mb-4">Danh sách Banners</h1>
-    @if (session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
-    </div>
-@endif
-    <a href="{{ route('admin.banners.create') }}" class="btn btn-primary mb-3">Thêm banner </a>
-    <a href="{{ route('admin.banners.delete') }}" class="btn btn-danger mb-3">Thùng rác  </a>
+\
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -29,12 +23,16 @@
                 <td>{{ $banner->ten_banner }}</td>
                 <td><img src="{{ asset('storage/' . $banner->anh) }}" alt="{{ $banner->ten_banner }}" width="100"></td>
                 <td><a href="{{ $banner->link }}" target="_blank">{{ $banner->link }}</a></td>
-                <td class="text-center d-flex justify-content-center align-items-center">
-                    <a href="{{ route('admin.banners.edit', $banner->id) }}" class="btn btn-primary btn-sm mr-2">Sửa</a>
-                    <form action="{{ route('admin.banners.destroy', $banner->id) }}" method="POST">
+                <td >
+                    <form action="{{ route('admin.banners.restore', $banner->id) }}" method="POST" class="d-inline me-2">
                         @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                        @method('PUT')
+                        <button type="submit" class="btn btn-info btn-sm">Khôi phục</button>
+                    </form>
+                    <form action="{{ route('admin.banners.forceDelete', $banner->id) }}" method="POST" class="d-inline">
+                        @csrf
+                        @method('POST')
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa banner này không?')">Xóa</button>
                     </form>
                 </td>
             </tr>

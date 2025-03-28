@@ -83,7 +83,8 @@
     </div>
 
     <a href="{{ route('admin.products.create') }}" class="btn btn-primary btn-sm">Thêm</a>
-
+    <a href="{{ route('admin.products.delete') }}" class="btn btn-danger btn-sm">Thùng rác </a>
+    
     <div class="table-responsive">
         <table class="table table-bordered">
             <thead class="thead-light">
@@ -129,6 +130,7 @@
                             <button type="submit" class="btn btn-danger btn-sm"
                                 onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?')">Xóa</button>
                         </form>
+                       
 
                     </td>
                     </tr>

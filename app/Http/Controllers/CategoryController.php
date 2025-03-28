@@ -44,11 +44,24 @@ class CategoryController extends Controller
         $category->update($dataUpdate);
         return redirect()->route('admin.categories.index');
     }
-    public function destroy(Category $category) {
+    public function destroy(Category $category , $id) {
+        $category = Category::findOrFail($id);
         if ($category->products()->exists()) {
             return back()->with('error', 'Danh mục đang có sản phẩm, không thể xóa!');
         }
         $category->delete();
-        return redirect()->route('admin.categories.index')->with('success', 'Xóa danh mục thành công ');
+        return redirect()->route('admin.categories.index' , compact('category'))->with('success', 'Xóa danh mục thành công ');
+    }
+    public function delete() {
+        $categories  = Category::onlyTrashed()->paginate(10);
+        return view('admin.category.delete', compact('categories'));
+    }
+    public function restore($id) {
+        $category = Category::withTrashed()->findOrFail($id)->restore();
+        return redirect()->route('admin.categories.index')->with('success', 'Khôi phục hợp lệ');
+    }
+    public function forceDelete($id) {
+        $category = Category::withTrashed()->findOrFail($id)->forceDelete();
+        return redirect()->route('admin.categories.index')->with('success', 'Xóa hợp lệ');
     }
 }

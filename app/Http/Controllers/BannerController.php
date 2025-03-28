@@ -71,12 +71,22 @@ class BannerController extends Controller
     
     public function destroy(Banner $banner , $id)
     {
-        $banner = Banner::findOrFail($id);
-        if ($banner->anh) {
-            Storage::disk('public')->delete($banner->anh);
-
-        }
-        $banner->delete();
+        $banner = Banner::findOrFail($id)->delete();
         return redirect()->route('admin.banners.index', compact('banner'))->with('success', 'Xóa banner thành công');
+    }
+
+    public function delete() {
+        $banners = Banner::onlyTrashed()->paginate();
+        return view('admin.banner.delete', compact('banners'));
+    }
+    
+    public function restore($id) {
+        $banners = Banner::withTrashed()->findOrFail($id)->restore();
+        return redirect()->route('admin.banners.index' , compact('banners'))->with('success', 'Khôi phức hợp lệ');
+    }
+    
+    public function forceDelete($id) {
+        $banners = Banner::withTrashed()->findOrFail($id)->forceDelete();
+        return redirect()->route('admin.banners.index' , compact('banners'))->with('success', 'Xóa hợp lệ');
     }
 }
