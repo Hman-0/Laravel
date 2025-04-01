@@ -21,7 +21,7 @@
             padding: 10px 15px;
         }
         .sidebar .nav-link:hover, .sidebar .nav-link.active {
-            background: gray;
+            background: #6c757d;
             border-radius: 5px;
         }
     </style>
@@ -29,33 +29,39 @@
 <body>
 
 <div class="sidebar">
-    <ul class="nav flex-column"><br>
-        <br>
+    <ul class="nav flex-column">
         <li class="nav-item">
-            <a class="nav-link active" href="{{route('admin.dashboard')}}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+            <a class="nav-link active" href="{{ route('admin.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{{route('admin.products.index')}}"><i class="bi bi-box"></i> Products</a>
+            <a class="nav-link" href="{{ route('admin.products.index') }}"><i class="bi bi-box"></i> Products</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{{route('admin.categories.index')}}"><i class="bi bi-envelope"></i> Category    </a>
+            <a class="nav-link" href="{{ route('admin.categories.index') }}"><i class="bi bi-envelope"></i> Category</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('admin.banners.index')}}"><i class="bi bi-people"></i> Banner </a>
+            <a class="nav-link" href="{{ route('admin.banners.index') }}"><i class="bi bi-people"></i> Banner</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#"><i class="bi bi-box-seam"></i> Orders</a>
+            <a class="nav-link" href="{{ route('admin.posts.index') }}"><i class="bi bi-box-seam"></i> Post</a>
         </li>
-        <li>
-             <div class="sidebar-footer text-center py-3">
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.contacts.index') }}"><i class="bi bi-box-seam"></i> Contact</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.reviews.index') }}"><i class="bi bi-box-seam"></i> Review</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.customers.index') }}"><i class="bi bi-box-seam"></i> Customer</a>
+        </li>
+    </ul>
+    <div class="sidebar-footer text-center py-3">
         <a href="#" class="btn btn-danger w-75">
             <i class="fas fa-sign-out-alt me-2"></i> Đăng xuất
         </a>
     </div>
-        </li>
-    </ul>
-   
 </div>
 
 </body>
 </html>
+

@@ -2,19 +2,20 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Customer extends Model
+class Review extends Model
 {
-    use HasFactory , SoftDeletes;
-    protected $table = 'customers';
+    use SoftDeletes , HasFactory;
+    protected $table = 'reviews';
     protected $fillable = [
         'name',
         'email',
         'phone',
-        'address',
-        'password'
+        'content',
+        'rating',
+    
     ];
 }

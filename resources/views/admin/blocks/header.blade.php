@@ -16,7 +16,12 @@
     <!-- Search Bar (nếu cần thêm sau) -->
     
     <form class="d-none d-md-flex ms-auto me-3">
-     Chào 
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="Search...">
+        <button class="btn btn-primary" type="submit">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
     </form>
 
     <!-- User Dropdown -->
@@ -39,5 +44,3 @@
   </div>
 </nav>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

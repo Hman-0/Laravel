@@ -10,6 +10,33 @@
         {{ session('success') }}
     </div>
 @endif
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0"><i class="fas fa-search"></i> Tìm kiếm sản phẩm</h5>
+    </div>
+<div class="card-body">
+    <form method="GET" action="{{ route('admin.banners.index') }}">
+        <div class="row g-3">
+            <!-- Mã banner -->
+            <div class="col-md-3">
+                <label class="form-label">Tên banner</label>
+                <input type="text" name="ten_banner" class="form-control" placeholder="Nhập tên banner"
+                    value="{{ request()->query('ten_banner') }}">
+            </div>
+            <div class="col-md-3 ms-auto d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100 me-1">
+                    <i class="fas fa-search"></i> Tìm kiếm
+                </button>
+                <a href="{{ route('admin.banners.index') }}" class="btn btn-secondary w-100 ms-1">
+                    <i class="fas fa-sync"></i> Làm mới
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+</div>
     <a href="{{ route('admin.banners.create') }}" class="btn btn-primary mb-3">Thêm banner </a>
     <a href="{{ route('admin.banners.delete') }}" class="btn btn-danger mb-3">Thùng rác  </a>
     <table class="table table-bordered">

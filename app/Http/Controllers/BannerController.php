@@ -8,8 +8,12 @@ use Illuminate\Support\Facades\Storage;
 
 class BannerController extends Controller
 {
-    public function index() {
-        $banners = Banner::all();
+    public function index(Request $request) {
+        $query = Banner::query();
+        if ($request->filled('ten_banner')) {
+            $query->where('ten_banner', 'like', '%' . $request->ten_banner . '%');
+        }
+        $banners = $query->paginate();
         return view('admin.banner.index' , compact('banners'));
     }
     

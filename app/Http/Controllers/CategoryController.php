@@ -7,11 +7,25 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function index() {
-        $categories = Category::all();
-        
-        return view('admin.category.index' , compact('categories'));
+    public function index(Request $request) {
+        $query = Category::query();
+    
+        // Lọc theo tên danh mục
+        if ($request->filled('ten_danh_muc')) {
+            $query->where('ten_danh_muc', 'like', '%' . $request->ten_danh_muc . '%');
+        }
+    
+        // Lọc theo trạng thái
+        if ($request->filled('trang_thai')) {
+            $query->where('trang_thai', $request->trang_thai);
+        }
+    
+        // Phân trang, giữ lại thông tin lọc
+        $categories = $query->paginate(10);
+    
+        return view('admin.category.index', compact('categories'));
     }
+    
     public function create() {
         return view('admin.category.create');
     }
