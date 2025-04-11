@@ -8,14 +8,24 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Review extends Model
 {
-    use SoftDeletes , HasFactory;
-    protected $table = 'reviews';
+    use HasFactory, SoftDeletes;
+
     protected $fillable = [
-        'name',
-        'email',
-        'phone',
+        'user_id',
+        'product_id',
         'content',
         'rating',
-    
     ];
+
+    // Quan hệ với bảng users
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    // Quan hệ với bảng products
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
 }

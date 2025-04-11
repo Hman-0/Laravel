@@ -1,99 +1,48 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Models\Review;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\ProductResource;
 use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index(Request $request)
     {
-        $query = Product::whereNull('deleted_at')
-        ->where('trang_thai', 1);
-
-    // Filter by name
-    if ($request->has('search') && !empty($request->search)) {
-        $query->where('ten_san_pham', 'like', '%' . $request->search . '%');
-    }
-
-    // Filter by category
-    if ($request->has('category') && !empty($request->category)) {
-        $query->where('category_id', $request->category);
-    }
-
-    // Filter by price range
-    if ($request->has('min_price') && !empty($request->min_price)) {
-        $query->where('gia_san_pham', '>=', $request->min_price);
-    }
-
-    if ($request->has('max_price') && !empty($request->max_price)) {
-        $query->where('gia_san_pham', '<=', $request->max_price);
-    }
-
-    // Sort products
-    if ($request->has('sort')) {
-        switch ($request->sort) {
-            case 'price_asc':
-                $query->orderBy('gia_san_pham', 'asc');
-                break;
-            case 'price_desc':
-                $query->orderBy('gia_san_pham', 'desc');
-                break;
-            case 'newest':
-                $query->orderBy('created_at', 'desc');
-                break;
-            default:
-                $query->orderBy('id', 'desc');
+        $query = Product::with('category');
+        if ($request->filled('ma_san_pham')) {
+            $query->where('ma_san_pham', 'like', '%' . $request->ma_san_pham . '%');
         }
-    } else {
-        $query->orderBy('id', 'desc');
+        if ($request->filled('ten_san_pham')) {
+            $query->where('ten_san_pham', 'like', '%' . $request->ten_san_pham . '%');
+        }
+        if ($request->filled('gia_san_pham_from') && $request->filled('gia_san_pham_to')) {
+            $query->whereBetween('gia_san_pham', [$request->gia_san_pham_from, $request->gia_san_pham_to]);
+        }
+        if ($request->filled('ngay_nhap_kho')) {
+            $query->whereDate('ngay_nhap_kho', $request->ngay_nhap_kho);
+        }
+        if ($request->filled('trang_thai')) {
+            $query->where('trang_thai', $request->trang_thai);
+        }
+
+        $products = $query->orderBy('id', 'desc')->paginate();
+
+        return response()->json($products);
     }
 
-    $products = $query->paginate(10);
-    $categories = Category::whereNull('deleted_at')->where('trang_thai', 1)->get();
-
-    return view('admin.products.index', compact('products', 'categories'));
-}
-
-
-    // app/Http/Controllers/ProductController.php (continuation)
-
-public function show($id)
-{
-    $product = Product::findOrFail($id);
-
-    // Get related products (same category)
-    $relatedProducts = Product::where('category_id', $product->category_id)
-        ->where('id', '!=', $product->id)
-        ->whereNull('deleted_at')
-        ->where('trang_thai', 1)
-        ->take(5)
-        ->get();
-
-    // Get product reviews
-    $reviews = Review::where('product_id', $product->id)
-        ->whereNull('deleted_at')
-        ->orderBy('created_at', 'desc')
-        ->get();
-
-    // Calculate average rating
-    $averageRating = $reviews->avg('rating') ?: 0;
-
-    return view('products.show', compact('product', 'relatedProducts', 'reviews', 'averageRating'));
-}
-    public function create()
-    {
-        $categories = Category::all();
-        return view('admin.products.create', compact('categories'));
-    }
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
-
     {
-
         $dataNew = $request->validate([
             'ma_san_pham'           => 'required|string|max:20|unique:products,ma_san_pham',
             'ten_san_pham'          => 'required|string|max:255',
@@ -133,17 +82,34 @@ public function show($id)
             $img = $request->file('img')->store('images/products', 'public');
             $dataNew['img'] = $img;
         }
-        Product::create($dataNew);
-        return redirect()->route('admin.products.index');
+        $products = Product::create($dataNew);
+        return response()->json([
+            'data' => new ProductResource($products),
+            'message' => 'Them ok',
+            'status' => 200,
+        ]);
     }
-    public function edit($id)
-    {
-        $product = Product::findOrFail($id);
-        $categories = Category::all();
-        return view('admin.products.edit', compact('product', 'categories'));
 
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        $products = Product::with('category')->findOrFail($id);
+        return response()->json([
+            'data' => new ProductResource($products),
+            'message' => 'Product retrieved successfully',
+            'status' => 200,
+        ]);
+        //Hiẻn thị thông qua resource
+        //Colection chỉ sửa dùng nhiều bản ghi
+        // return new ProductResource($products);
     }
-    public function update(Request $request, $id)
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
     {
         $product = Product::findOrFail($id);
         $dataNew = $request->validate([
@@ -188,32 +154,26 @@ public function show($id)
             $dataNew['img'] = $img;
         }
         $product->update($dataNew);
-        return redirect()->route('admin.products.index');
+        return response()->json([
+            'data' => new ProductResource($product),
+            'message' => 'Product updated successfully',
+            'status' => 201,
+        ]);
     }
-    public function destroy($id)
-    {
-        $product = Product::findOrFail($id)->delete();
-        return redirect()->route('admin.products.index')->with('success', 'Xóa sản phẩm thành công');
-    }
-    public function delete()
-    {
-        $products  = Product::onlyTrashed()->paginate(10);
-        return view('admin.products.delete', compact('products'));
 
-    }
-    public function restore($id)
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
     {
-        $products  = Product::withTrashed()->findOrFail($id)->restore();
-        return redirect()->route('admin.products.index' , compact('products'))->with('success', 'Khôi phục hợp lệ');
-    }
-    public function forceDelete($id)
-    {
-        $products = Product::withTrashed()->findOrFail($id);
-        if ($products->img) {
-            Storage::disk('public')->delete($products->img);
+        $product = Product::findOrFail($id);
+        if ($product->img) {
+            Storage::disk('public')->delete($product->img);
         }
-        $products->forceDelete();
-        return redirect()->route('admin.products.index' ,compact('products'))->with('success', 'Xóa hợp lệ');
+        $product->delete();
+        return response()->json([
+            'message' => 'Product deleted successfully',
+            'status' => 200,
+        ]);
     }
-
 }

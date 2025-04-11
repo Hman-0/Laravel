@@ -3,48 +3,63 @@
 namespace App\Http\Controllers;
 
 use App\Models\Review;
+use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ReviewsController extends Controller
 {
-    public function index(Request $request) {
-        $query = Review::query();
+    public function index(Request $request)
+    {
+        $query = Review::with(['user', 'product']); // Tải quan hệ user và product
+
+        // Lọc theo tên người dùng
         if ($request->filled('name')) {
-            $query->where('name', 'like', '%' . $request->input('name') . '%');
+            $query->whereHas('user', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->input('name') . '%');
+            });
         }
+
+        // Lọc theo email người dùng
         if ($request->filled('email')) {
-            $query->where('email', 'like', '%' . $request->input('email') . '%');
+            $query->whereHas('user', function ($q) use ($request) {
+                $q->where('email', 'like', '%' . $request->input('email') . '%');
+            });
         }
-        if ($request->filled('phone')) {
-            $query->where('phone', 'like', '%' . $request->input('phone') . '%');
+
+        // Lọc theo tên sản phẩm (nếu cần)
+        if ($request->filled('product_name')) {
+            $query->whereHas('product', function ($q) use ($request) {
+                $q->where('ten_san_pham', 'like', '%' . $request->input('product_name') . '%');
+            });
         }
+
         $reviews = $query->paginate(10);
         return view('admin.review.index', compact('reviews'));
     }
+
     public function create()
     {
-        return view('admin.review.create');
+        $products = Product::all();
+        $users = User::all(); // Lấy danh sách người dùng để chọn
+        return view('admin.review.create', compact('products', 'users'));
     }
 
     public function store(Request $request)
     {
         $dataNew = $request->validate([
-            'name' => 'required|string|max:150',
-            'email' => 'required|email|unique:reviews,email',
-            'phone' => 'required|numeric|digits_between:9,11|unique:reviews,phone',
+            'user_id' => 'required|exists:users,id',
+            'product_id' => 'required|exists:products,id',
             'content' => 'required|string',
             'rating' => 'required|integer|between:1,5',
         ], [
             'required' => ':attribute không được để trống',
-            'email' => ':attribute không đúng định dạng',
-            'unique' => ':attribute đã tồn tại',
-            'numeric' => ':attribute phải là số',
-            'digits_between' => ':attribute phải có từ :min đến :max chữ số',
+            'exists' => ':attribute không hợp lệ',
             'between' => ':attribute phải từ :min đến :max',
         ], [
-            'name' => 'Tên',
-            'email' => 'Email',
-            'phone' => 'Điện thoại',
+            'user_id' => 'Người dùng',
+            'product_id' => 'Sản phẩm',
             'content' => 'Nội dung',
             'rating' => 'Đánh giá',
         ]);
@@ -56,7 +71,9 @@ class ReviewsController extends Controller
     public function edit($id)
     {
         $review = Review::findOrFail($id);
-        return view('admin.review.edit', compact('review'));
+        $products = Product::all();
+        $users = User::all(); // Lấy danh sách người dùng để chọn
+        return view('admin.review.edit', compact('review', 'products', 'users'));
     }
 
     public function update(Request $request, $id)
@@ -64,11 +81,19 @@ class ReviewsController extends Controller
         $review = Review::findOrFail($id);
 
         $dataUpdate = $request->validate([
-            'name' => 'required|string|max:150',
-            'email' => 'required|email|unique:reviews,email,' . $id,
-            'phone' => 'required|numeric|digits_between:9,11|unique:reviews,phone,' . $id,
+            'user_id' => 'required|exists:users,id',
+            'product_id' => 'required|exists:products,id',
             'content' => 'required|string',
             'rating' => 'required|integer|between:1,5',
+        ], [
+            'required' => ':attribute không được để trống',
+            'exists' => ':attribute không hợp lệ',
+            'between' => ':attribute phải từ :min đến :max',
+        ], [
+            'user_id' => 'Người dùng',
+            'product_id' => 'Sản phẩm',
+            'content' => 'Nội dung',
+            'rating' => 'Đánh giá',
         ]);
 
         $review->update($dataUpdate);
@@ -86,7 +111,7 @@ class ReviewsController extends Controller
 
     public function delete()
     {
-        $reviews = Review::onlyTrashed()->paginate(10);
+        $reviews = Review::onlyTrashed()->with(['user', 'product'])->paginate(10);
         return view('admin.review.delete', compact('reviews'));
     }
 

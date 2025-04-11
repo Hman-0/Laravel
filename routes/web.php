@@ -9,14 +9,16 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReviewsController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ContactsController;
-use App\Http\Controllers\CustomersControler;
+use App\Http\Controllers\CustomersController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ClientController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
-Route::prefix('admin')->name('admin.')->group(function () {
+// Admin routes (preserved from original)
+Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
     Route::prefix('products')->name('products.')->group(function () {
         Route::get('/', [ProductController::class, 'index'])->name('index');
         Route::get('/{id}/show', [ProductController::class, 'show'])->name('show');
@@ -41,6 +43,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('/{id}/restore', [CategoryController::class, 'restore'])->name('restore');
         Route::post('/{id}/forceDelete', [CategoryController::class, 'forceDelete'])->name('forceDelete');
     });
+
     Route::prefix('banners')->name('banners.')->group(function () {
         Route::get('/', [BannerController::class, 'index'])->name('index');
         Route::get('/create', [BannerController::class, 'create'])->name('create');
@@ -59,11 +62,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/store', [PostsController::class, 'store'])->name('store');
         Route::get('/{id}/edit', [PostsController::class, 'edit'])->name('edit');
         Route::put('/{id}/update', [PostsController::class, 'update'])->name('update');
+        Route::get('/{id}/show', [PostsController::class, 'show'])->name('show');
         Route::delete('/{id}/destroy', [PostsController::class, 'destroy'])->name('destroy');
         Route::get('/delete', [PostsController::class, 'delete'])->name('delete');
         Route::put('/{id}/restore', [PostsController::class, 'restore'])->name('restore');
         Route::post('/{id}/forceDelete', [PostsController::class, 'forceDelete'])->name('forceDelete');
     });
+
     Route::prefix('contacts')->name('contacts.')->group(function () {
         Route::get('/', [ContactsController::class, 'index'])->name('index');
         Route::get('/create', [ContactsController::class, 'create'])->name('create');
@@ -87,16 +92,43 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('/{id}/restore', [ReviewsController::class, 'restore'])->name('restore');
         Route::post('/{id}/forceDelete', [ReviewsController::class, 'forceDelete'])->name('forceDelete');
     });
+
     Route::prefix('customers')->name('customers.')->group(function () {
-        Route::get('/', [CustomersControler::class, 'index'])->name('index');
-        Route::get('/create', [CustomersControler::class, 'create'])->name('create');
-        Route::post('/store', [CustomersControler::class, 'store'])->name('store');
-        Route::get('/{id}/edit', [CustomersControler::class, 'edit'])->name('edit');
-        Route::put('/{id}/update', [CustomersControler::class, 'update'])->name('update');
-        Route::delete('/{id}/destroy', [CustomersControler::class, 'destroy'])->name('destroy');
-        Route::get('/delete', [CustomersControler::class, 'delete'])->name('delete');
-        Route::put('/{id}/restore', [CustomersControler::class, 'restore'])->name('restore');
-        Route::post('/{id}/forceDelete', [CustomersControler::class, 'forceDelete'])->name('forceDelete');
+        Route::get('/', [CustomersController::class, 'index'])->name('index');
+        Route::get('/create', [CustomersController::class, 'create'])->name('create');
+        Route::post('/store', [CustomersController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [CustomersController::class, 'edit'])->name('edit');
+        Route::put('/{id}/update', [CustomersController::class, 'update'])->name('update');
+        Route::delete('/{id}/destroy', [CustomersController::class, 'destroy'])->name('destroy');
+        Route::get('/delete', [CustomersController::class, 'delete'])->name('delete');
+        Route::put('/{id}/restore', [CustomersController::class, 'restore'])->name('restore');
+        Route::post('/{id}/forceDelete', [CustomersController::class, 'forceDelete'])->name('forceDelete');
     });
-    
 });
+
+// Auth routes
+    Route::get('/showLogin', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login-post');
+    Route::get('/showRegister', [AuthController::class, 'showRegister'])->name('showRegister');
+    Route::post('/register-post', [AuthController::class, 'register'])->name('register-post');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+
+// Client routes
+
+
+    Route::get('/home', [ClientController::class, 'index'])->name('home');
+    Route::get('/products', [ClientController::class, 'productList'])->name('products');
+    Route::get('/products/{id}', [ClientController::class, 'productDetail'])->name('products.show');
+    Route::post('/reviews', [ClientController::class, 'store'])->name('reviews.store');
+
+    Route::middleware(['auth'])->group(function() {
+        Route::get('/products/{id}/reviews', [ClientController::class, 'productReviews'])->name('products.reviews');
+        Route::post('/products/{id}/reviews', [ClientController::class, 'storeReview'])->name('products.reviews.store');
+    });
+    Route::get('/blog', [ClientController::class, 'postList'])->name('posts');
+    Route::get('/blog/{id}', [ClientController::class, 'postDetail'])->name('posts.show');
+
+
+
+

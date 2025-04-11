@@ -12,12 +12,11 @@
     @endif
     <div class="card shadow-sm mb-4">
         <div class="card-header bg-primary text-white">
-            <h5 class="mb-0"><i class="fas fa-search"></i> Tìm kiếm đánh giá  </h5>
+            <h5 class="mb-0"><i class="fas fa-search"></i> Tìm kiếm đánh giá</h5>
         </div>
         <div class="card-body">
             <form method="GET" action="{{ route('admin.reviews.index') }}">
                 <div class="row g-3">
-                    <!-- Mã liên hệ -->
                     <div class="col-md-3">
                         <label class="form-label">Tên liên hệ</label>
                         <input type="text" name="name" class="form-control" placeholder="Nhập tên liên hệ"
@@ -29,11 +28,10 @@
                             value="{{ request()->query('email') }}">
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label">Phone </label>
-                        <input type="phone" name="phone" class="form-control" placeholder="Nhập số điện thoại "
+                        <label class="form-label">Điện thoại</label>
+                        <input type="text" name="phone" class="form-control" placeholder="Nhập số điện thoại"
                             value="{{ request()->query('phone') }}">
                     </div>
-                   
                     <div class="col-md-3 ms-auto d-flex align-items-end">
                         <button type="submit" class="btn btn-primary w-100 me-1">
                             <i class="fas fa-search"></i> Tìm kiếm
@@ -46,38 +44,39 @@
             </form>
         </div>
     </div>
+
     <div class="mb-3">
         <a href="{{ route('admin.reviews.create') }}" class="btn btn-primary">Thêm mới</a>
         <a href="{{ route('admin.reviews.delete') }}" class="btn btn-danger">Thùng rác</a>
     </div>
 
-    <table class="table table-bordered">
+    <table class="table">
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Tên</th>
+                <th>Tên người dùng</th>
                 <th>Email</th>
-                <th>Điện thoại</th>
+                <th>Sản phẩm</th>
                 <th>Nội dung</th>
                 <th>Đánh giá</th>
-                <th>Hành động</th>
+                <th>Thao tác</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($reviews as $review)
+            @foreach($reviews as $review)
                 <tr>
                     <td>{{ $review->id }}</td>
-                    <td>{{ $review->name }}</td>
-                    <td>{{ $review->email }}</td>
-                    <td>{{ $review->phone }}</td>
+                    <td>{{ $review->user->name }}</td>
+                    <td>{{ $review->user->email }}</td>
+                    <td>{{ $review->product->ten_san_pham }}</td>
                     <td>{{ $review->content }}</td>
                     <td>{{ $review->rating }}</td>
                     <td>
-                        <a href="{{ route('admin.reviews.edit', $review->id) }}" class="btn btn-sm btn-warning">Sửa</a>
-                        <form action="{{ route('admin.reviews.destroy', $review->id) }}" method="POST" style="display:inline-block;">
+                        <a href="{{ route('admin.reviews.edit', $review->id) }}" class="btn btn-warning">Sửa</a>
+                        <form action="{{ route('admin.reviews.destroy', $review->id) }}" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</button>
                         </form>
                     </td>
                 </tr>
@@ -89,4 +88,3 @@
         {{ $reviews->links() }}
     </div>
 @endsection
-

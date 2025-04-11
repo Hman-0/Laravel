@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('reviews', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 100);
-            $table->string('email', 100)->nullable()->unique();
-            $table->string('phone', 15)->nullable()->unique();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Liên kết với bảng users
+            $table->foreignId('product_id')->constrained('products')->onDelete('cascade'); // Liên kết với bảng products
             $table->text('content');
             $table->unsignedTinyInteger('rating'); // Đảm bảo chỉ nhận giá trị từ 0-255 (dùng cho rating 1-5 sao)
             $table->timestamps();
+            $table->softDeletes(); // Thêm soft deletes để khớp với cấu trúc hiện tại
         });
     }
 

@@ -6,7 +6,7 @@ use App\Models\Customer;
 use Illuminate\Http\Request;
 
 
-class CustomersControler extends Controller
+class CustomersController extends Controller
 {
     public function index(Request $request) {
         $query = Customer::query();

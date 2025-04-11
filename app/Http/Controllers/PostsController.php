@@ -43,7 +43,7 @@ class PostsController extends Controller
         ], [
             'title' => 'Tieu de',
             'content' => 'Noi dung',
-            'category_id' => 'Danh muc',    
+            'category_id' => 'Danh muc',
             'image' => 'Hinh anh',
         ]);
         if ($request->hasFile('image')) {
@@ -72,7 +72,7 @@ class PostsController extends Controller
         ], [
             'title' => 'Tieu de',
             'content' => 'Noi dung',
-            'category_id' => 'Danh muc',    
+            'category_id' => 'Danh muc',
             'image' => 'Hinh anh',
         ]);
         if ($request->hasFile('image')) {
@@ -107,5 +107,9 @@ class PostsController extends Controller
         }
         $post->forceDelete();
         return redirect()->route('admin.posts.index' )->with('success' , 'Xoa bai viet thanh cong');
+    }
+    public function show($id) {
+        $post = Posts::findOrFail($id);
+        return view('admin.posts.show' , compact('post'));
     }
 }

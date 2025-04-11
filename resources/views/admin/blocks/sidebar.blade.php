@@ -56,8 +56,10 @@
         </li>
     </ul>
     <div class="sidebar-footer text-center py-3">
-        <a href="#" class="btn btn-danger w-75">
-            <i class="fas fa-sign-out-alt me-2"></i> Đăng xuất
+    <form action="{{ route('logout') }}" method="POST">
+        @csrf
+        <button class="btn btn-danger w-100" type="submit">Logout</button>
+    </form>
         </a>
     </div>
 </div>
